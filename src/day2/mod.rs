@@ -15,7 +15,7 @@ impl Command {
     }
 }
 
-fn load_foo(input: &str) -> Vec<Command> {
+fn load_commands(input: &str) -> Vec<Command> {
     input.lines().map(Command::parse).collect()
 }
 
@@ -50,7 +50,7 @@ fn solve_part2(cmds: &Vec<Command>) -> usize {
 }
 
 pub fn solve() -> (usize, usize) {
-    let cmds = load_foo(include_str!("input.txt"));
+    let cmds = load_commands(include_str!("input.txt"));
     (solve_part1(&cmds), solve_part2(&cmds))
 }
 
@@ -58,13 +58,13 @@ pub fn solve() -> (usize, usize) {
 mod tests {
     #[test]
     fn solve_part1() {
-        let cmds = super::load_foo(include_str!("example.txt"));
+        let cmds = super::load_commands(include_str!("example.txt"));
         assert_eq!(super::solve_part1(&cmds), 150);
     }
 
     #[test]
     fn solve_part2() {
-        let cmds = super::load_foo(include_str!("example.txt"));
+        let cmds = super::load_commands(include_str!("example.txt"));
         assert_eq!(super::solve_part2(&cmds), 900);
     }
 }
