@@ -1,39 +1,34 @@
 use std::collections::*;
 
 pub fn solve() -> (usize, usize) {
-    let input = load_input(include_str!("input.txt"));
-    (solve_part1(12, &input), solve_part2(12, &input))
+    let (bits, reports) = load_input(include_str!("input.txt"));
+    (solve_part1(bits, &reports), solve_part2(bits, &reports))
 }
 
-fn load_input(input: &str) -> Vec<usize> {
-    input
-        .lines()
-        .filter_map(|line| usize::from_str_radix(line, 2).ok())
-        .collect()
+fn load_input(input: &str) -> (usize, Vec<usize>) {
+    (
+        input.lines().take(1).last().unwrap().len(),
+        input
+            .lines()
+            .filter_map(|line| usize::from_str_radix(line, 2).ok())
+            .collect(),
+    )
 }
 
-fn calc_stats(len: usize, input: &Vec<usize>) -> HashMap<usize, (usize, usize)> {
-    let mut stats = HashMap::new();
-    for i in 0..len {
-        let mask = 1 << (len - i - 1);
-        let ones = input.iter().filter(|line| (*line & mask) == mask).count();
-        stats.insert(i, (input.len() - ones, ones));
-    }
-    stats
+fn calc_bit_stats<I: ExactSizeIterator<Item = usize>>(bit: usize, reports: I) -> (usize, usize) {
+    let total = reports.len();
+    let mask = 1 << (bit - 1);
+    let ones = reports.filter(|line| (*line & mask) == mask).count();
+    (total - ones, ones)
 }
 
-fn calc_rating(len: usize, inverse: bool, input: &Vec<usize>) -> usize {
-    let mut set = HashSet::<usize>::from_iter(input.clone());
-    for i in 0..len {
-        let stats = calc_stats(len, &set.iter().cloned().collect());
-        let (zeros, ones) = stats.get(&i).unwrap();
-        let mask = 1 << (len - i - 1);
-        for line in input {
-            let bit_set = ((line & mask) == mask) ^ inverse;
-            if (ones >= zeros && !bit_set) || (ones < zeros && bit_set) {
-                set.remove(line);
-            }
-        }
+fn calc_rating(bits: usize, inv: bool, reports: &Vec<usize>) -> usize {
+    let mut set = HashSet::<usize>::from_iter(reports.iter().copied());
+    for i in 0..bits {
+        let (zeros, ones) = calc_bit_stats(bits - i, set.iter().copied());
+        let mask = 1 << (bits - i - 1);
+        let criteria = (ones >= zeros) ^ inv;
+        set.retain(|report| criteria == ((report & mask) == mask));
         if set.len() == 1 {
             break;
         }
@@ -41,38 +36,35 @@ fn calc_rating(len: usize, inverse: bool, input: &Vec<usize>) -> usize {
     *set.iter().last().unwrap()
 }
 
-fn solve_part1(len: usize, input: &Vec<usize>) -> usize {
+fn solve_part1(bits: usize, reports: &Vec<usize>) -> usize {
     let mut gamma = 0;
     let mut epsilon = 0;
-    let stats = calc_stats(len, input);
-    for i in 0..len {
+    for i in 0..bits {
         gamma <<= 1;
         epsilon <<= 1;
-        let (zeros, ones) = stats.get(&i).unwrap();
-        if zeros > ones {
-            epsilon += 1;
-        } else {
-            gamma += 1;
+        match calc_bit_stats(bits - i, reports.iter().copied()) {
+            (zeros, ones) if zeros > ones => epsilon += 1,
+            _ => gamma += 1,
         }
     }
     gamma * epsilon
 }
 
-fn solve_part2(len: usize, input: &Vec<usize>) -> usize {
-    calc_rating(len, false, input) * calc_rating(len, true, input)
+fn solve_part2(bits: usize, reports: &Vec<usize>) -> usize {
+    calc_rating(bits, false, reports) * calc_rating(bits, true, reports)
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn solve_part1() {
-        let input = super::load_input(include_str!("example.txt"));
-        assert_eq!(super::solve_part1(5, &input), 198);
+        let (bits, reports) = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part1(bits, &reports), 198);
     }
 
     #[test]
     fn solve_part2() {
-        let input = super::load_input(include_str!("example.txt"));
-        assert_eq!(super::solve_part2(5, &input), 230);
+        let (bits, reports) = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part2(bits, &reports), 230);
     }
 }

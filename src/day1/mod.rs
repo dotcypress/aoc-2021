@@ -4,7 +4,7 @@ pub fn solve() -> (usize, usize) {
 }
 
 fn load_input(input: &str) -> Vec<usize> {
-    input.lines().map(|line| line.parse().unwrap()).collect()
+    input.lines().filter_map(|line| line.parse().ok()).collect()
 }
 
 fn scan(sweep: &Vec<usize>, window: usize) -> usize {
