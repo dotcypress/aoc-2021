@@ -16,12 +16,7 @@ fn calc_stats(len: usize, input: &Vec<usize>) -> HashMap<usize, (usize, usize)> 
     let mut stats = HashMap::new();
     for i in 0..len {
         let mask = 1 << (len - i - 1);
-        let mut ones = 0;
-        for line in input {
-            if (line & mask) == mask {
-                ones += 1;
-            }
-        }
+        let ones = input.iter().filter(|line| (*line & mask) == mask).count();
         stats.insert(i, (input.len() - ones, ones));
     }
     stats
