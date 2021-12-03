@@ -1,3 +1,12 @@
+pub fn solve() -> (usize, usize) {
+    let input = load_input(include_str!("input.txt"));
+    (solve_part1(&input), solve_part2(&input))
+}
+
+fn load_input(input: &str) -> Vec<Command> {
+    input.lines().map(Command::parse).collect()
+}
+
 pub enum Command {
     Forward(usize),
     Down(usize),
@@ -13,10 +22,6 @@ impl Command {
             _ => unreachable!(),
         }
     }
-}
-
-fn load_commands(input: &str) -> Vec<Command> {
-    input.lines().map(Command::parse).collect()
 }
 
 fn solve_part1(cmds: &Vec<Command>) -> usize {
@@ -49,22 +54,17 @@ fn solve_part2(cmds: &Vec<Command>) -> usize {
     pos * depth
 }
 
-pub fn solve() -> (usize, usize) {
-    let cmds = load_commands(include_str!("input.txt"));
-    (solve_part1(&cmds), solve_part2(&cmds))
-}
-
 #[cfg(test)]
 mod tests {
     #[test]
     fn solve_part1() {
-        let cmds = super::load_commands(include_str!("example.txt"));
-        assert_eq!(super::solve_part1(&cmds), 150);
+        let input = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part1(&input), 150);
     }
 
     #[test]
     fn solve_part2() {
-        let cmds = super::load_commands(include_str!("example.txt"));
-        assert_eq!(super::solve_part2(&cmds), 900);
+        let input = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part2(&input), 900);
     }
 }

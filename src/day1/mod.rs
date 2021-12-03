@@ -1,4 +1,9 @@
-fn load_sweep(input: &str) -> Vec<usize> {
+pub fn solve() -> (usize, usize) {
+    let input = load_input(include_str!("input.txt"));
+    (solve_part1(&input), solve_part2(&input))
+}
+
+fn load_input(input: &str) -> Vec<usize> {
     input.lines().map(|line| line.parse().unwrap()).collect()
 }
 
@@ -17,22 +22,17 @@ fn solve_part2(sweep: &Vec<usize>) -> usize {
     scan(sweep, 3)
 }
 
-pub fn solve() -> (usize, usize) {
-    let sweep = load_sweep(include_str!("input.txt"));
-    (solve_part1(&sweep), solve_part2(&sweep))
-}
-
 #[cfg(test)]
 mod tests {
     #[test]
     fn solve_part1() {
-        let sweep = super::load_sweep(include_str!("example.txt"));
-        assert_eq!(super::solve_part1(&sweep), 7);
+        let input = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part1(&input), 7);
     }
 
     #[test]
     fn solve_part2() {
-        let sweep = super::load_sweep(include_str!("example.txt"));
-        assert_eq!(super::solve_part2(&sweep), 5);
+        let input = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part2(&input), 5);
     }
 }
