@@ -29,14 +29,12 @@ fn calc_stats(len: usize, input: &Vec<usize>) -> HashMap<usize, (usize, usize)> 
 
 fn calc_rating(len: usize, inverse: bool, input: &Vec<usize>) -> usize {
     let mut set = HashSet::<usize>::from_iter(input.clone());
-
     for i in 0..len {
         let stats = calc_stats(len, &set.iter().cloned().collect());
         let (zeros, ones) = stats.get(&i).unwrap();
         let mask = 1 << (len - i - 1);
         for line in input {
             let bit_set = ((line & mask) == mask) ^ inverse;
-            if inverse {}
             if (ones >= zeros && !bit_set) || (ones < zeros && bit_set) {
                 set.remove(line);
             }
@@ -53,9 +51,9 @@ fn solve_part1(len: usize, input: &Vec<usize>) -> usize {
     let mut epsilon = 0;
     let stats = calc_stats(len, input);
     for i in 0..len {
+        gamma <<= 1;
+        epsilon <<= 1;
         let (zeros, ones) = stats.get(&i).unwrap();
-        gamma = gamma << 1;
-        epsilon = epsilon << 1;
         if zeros > ones {
             epsilon += 1;
         } else {
