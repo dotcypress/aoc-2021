@@ -1,10 +1,10 @@
 use crate::*;
 
-puzzle!(TBD, 0, 0);
+solver!("-n/a-", X, 0, 0);
 
-struct TBD {}
+struct X {}
 
-impl TBD {
+impl X {
     fn parse(_input: &str) -> Self {
         Self {}
     }

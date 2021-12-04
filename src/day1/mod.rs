@@ -1,6 +1,6 @@
 use crate::*;
 
-puzzle!(Sonar, 7, 5);
+solver!("Sonar Sweep", Sonar, 7, 5);
 
 struct Sonar {
     sweep: Vec<usize>,

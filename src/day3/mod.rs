@@ -1,21 +1,21 @@
 use crate::*;
 use std::collections::*;
 
-puzzle!(BinaryDiagnostic, 198, 230);
+solver!("Binary Diagnostic", NoiseAnalyzer, 198, 230);
 
-struct BinaryDiagnostic {
+struct NoiseAnalyzer {
     bits: usize,
-    reports: Vec<usize>,
+    report: Vec<usize>,
 }
 
-impl BinaryDiagnostic {
+impl NoiseAnalyzer {
     fn parse(input: &str) -> Self {
         let bits = input.lines().take(1).last().unwrap().len();
-        let reports = input
+        let report = input
             .lines()
             .filter_map(|line| usize::from_str_radix(line, 2).ok())
             .collect();
-        Self { bits, reports }
+        Self { bits, report }
     }
 
     fn part_one(self) -> usize {
@@ -24,7 +24,7 @@ impl BinaryDiagnostic {
         for i in 0..self.bits {
             gamma <<= 1;
             epsilon <<= 1;
-            match Self::bit_stats(self.bits - i, self.reports.iter().copied()) {
+            match Self::bit_stats(self.bits - i, self.report.iter().copied()) {
                 (zeros, ones) if zeros > ones => epsilon += 1,
                 _ => gamma += 1,
             }
@@ -33,18 +33,18 @@ impl BinaryDiagnostic {
     }
 
     fn part_two(self) -> usize {
-        self.calc_rating(false) * self.calc_rating(true)
+        self.rating(false) * self.rating(true)
     }
 
-    fn bit_stats<I: ExactSizeIterator<Item = usize>>(bit: usize, reports: I) -> (usize, usize) {
-        let total = reports.len();
+    fn bit_stats<I: ExactSizeIterator<Item = usize>>(bit: usize, report: I) -> (usize, usize) {
+        let total = report.len();
         let mask = 1 << (bit - 1);
-        let ones = reports.filter(|line| (*line & mask) == mask).count();
+        let ones = report.filter(|line| (*line & mask) == mask).count();
         (total - ones, ones)
     }
 
-    fn calc_rating(&self, inv: bool) -> usize {
-        let mut set = HashSet::<usize>::from_iter(self.reports.iter().copied());
+    fn rating(&self, inv: bool) -> usize {
+        let mut set = HashSet::<usize>::from_iter(self.report.iter().copied());
         for i in 0..self.bits {
             let (zeros, ones) = Self::bit_stats(self.bits - i, set.iter().copied());
             let mask = 1 << (self.bits - i - 1);

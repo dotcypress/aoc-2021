@@ -1,12 +1,12 @@
 use crate::*;
 
-puzzle!(Dive, 150, 900);
+solver!("Dive!", Submarine, 150, 900);
 
-struct Dive {
+struct Submarine {
     cmds: Vec<Command>,
 }
 
-impl Dive {
+impl Submarine {
     fn parse(input: &str) -> Self {
         let cmds = input.lines().map(Command::parse).collect();
         Self { cmds }
@@ -51,10 +51,12 @@ pub enum Command {
 
 impl Command {
     pub fn parse(cmd: &str) -> Self {
-        match cmd.split_once(" ") {
-            Some(("forward", n)) => Self::Forward(n.parse().unwrap()),
-            Some(("down", n)) => Self::Down(n.parse().unwrap()),
-            Some(("up", n)) => Self::Up(n.parse().unwrap()),
+        let (cmd, x) = cmd.split_once(" ").unwrap();
+        let x = x.parse().unwrap();
+        match cmd {
+            "forward" => Self::Forward(x),
+            "down" => Self::Down(x),
+            "up" => Self::Up(x),
             _ => unreachable!(),
         }
     }
