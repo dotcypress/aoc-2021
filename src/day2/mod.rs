@@ -12,10 +12,10 @@ impl Puzzle for Dive {
         Self { cmds }
     }
 
-    fn part_one(self) -> usize {
+    fn part_one(&mut self) -> usize {
         let mut pos = 0;
         let mut depth = 0;
-        for cmd in self.cmds {
+        for cmd in &self.cmds {
             match cmd {
                 Command::Down(x) => depth += x,
                 Command::Up(x) => depth -= x,
@@ -25,11 +25,11 @@ impl Puzzle for Dive {
         pos * depth
     }
 
-    fn part_two(self) -> usize {
+    fn part_two(&mut self) -> usize {
         let mut aim = 0;
         let mut pos = 0;
         let mut depth = 0;
-        for cmd in self.cmds {
+        for cmd in &self.cmds {
             match cmd {
                 Command::Down(x) => aim += x,
                 Command::Up(x) => aim -= x,

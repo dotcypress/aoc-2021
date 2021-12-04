@@ -6,8 +6,8 @@ pub mod day5;
 
 pub trait Puzzle {
     fn parse(input: &str) -> Self;
-    fn part_one(self) -> usize;
-    fn part_two(self) -> usize;
+    fn part_one(&mut self) -> usize;
+    fn part_two(&mut self) -> usize;
 }
 
 #[macro_export]

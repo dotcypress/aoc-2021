@@ -21,11 +21,11 @@ impl Puzzle for Sonar {
         Self { sweep }
     }
 
-    fn part_one(self) -> usize {
+    fn part_one(&mut self) -> usize {
         self.scan(1)
     }
 
-    fn part_two(self) -> usize {
+    fn part_two(&mut self) -> usize {
         self.scan(3)
     }
 }

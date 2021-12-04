@@ -18,7 +18,7 @@ impl Puzzle for BinaryDiagnostic {
         Self { bits, reports }
     }
 
-    fn part_one(self) -> usize {
+    fn part_one(&mut self) -> usize {
         let mut gamma = 0;
         let mut epsilon = 0;
         for i in 0..self.bits {
@@ -32,7 +32,7 @@ impl Puzzle for BinaryDiagnostic {
         gamma * epsilon
     }
 
-    fn part_two(self) -> usize {
+    fn part_two(&mut self) -> usize {
         calc_rating(self.bits, false, &self.reports) * calc_rating(self.bits, true, &self.reports)
     }
 }

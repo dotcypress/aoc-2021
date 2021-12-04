@@ -16,7 +16,7 @@ impl Puzzle for Bingo {
         Self { draw, boards }
     }
 
-    fn part_one(self) -> usize {
+    fn part_one(&mut self) -> usize {
         let mut boards = self.boards.to_vec();
         for (i, n) in self.draw.iter().enumerate() {
             for board in boards.iter_mut() {
@@ -28,7 +28,7 @@ impl Puzzle for Bingo {
         0
     }
 
-    fn part_two(self) -> usize {
+    fn part_two(&mut self) -> usize {
         let mut boards = self.boards.to_vec();
         for (i, n) in self.draw.iter().enumerate() {
             for board in boards.iter_mut() {

@@ -9,11 +9,11 @@ impl Puzzle for TBD {
         Self {}
     }
 
-    fn part_one(self) -> usize {
+    fn part_one(&mut self) -> usize {
         0
     }
 
-    fn part_two(self) -> usize {
+    fn part_two(&mut self) -> usize {
         0
     }
 }
