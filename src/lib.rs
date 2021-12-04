@@ -4,12 +4,6 @@ pub mod day3;
 pub mod day4;
 pub mod day5;
 
-pub trait Puzzle {
-    fn parse(input: &str) -> Self;
-    fn part_one(&mut self) -> usize;
-    fn part_two(&mut self) -> usize;
-}
-
 #[macro_export]
 macro_rules! puzzle {
     ($puzzle:ty, $part_one_test:expr, $part_two_test:expr) => {
@@ -21,6 +15,7 @@ macro_rules! puzzle {
             )
         }
 
+        #[cfg(test)]
         #[test]
         fn test() {
             let input = include_str!("test.txt");

@@ -6,13 +6,13 @@ struct Dive {
     cmds: Vec<Command>,
 }
 
-impl Puzzle for Dive {
+impl Dive {
     fn parse(input: &str) -> Self {
         let cmds = input.lines().map(Command::parse).collect();
         Self { cmds }
     }
 
-    fn part_one(&mut self) -> usize {
+    fn part_one(self) -> usize {
         let mut pos = 0;
         let mut depth = 0;
         for cmd in &self.cmds {
@@ -25,7 +25,7 @@ impl Puzzle for Dive {
         pos * depth
     }
 
-    fn part_two(&mut self) -> usize {
+    fn part_two(self) -> usize {
         let mut aim = 0;
         let mut pos = 0;
         let mut depth = 0;
