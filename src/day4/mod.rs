@@ -1,9 +1,6 @@
 pub fn solve() -> (usize, usize) {
-    let mut input = load_input(include_str!("input.txt"));
-    (
-        solve_part1(&input.0, &mut input.1),
-        solve_part2(&input.0, &mut input.1),
-    )
+    let (draw, boards) = load_input(include_str!("input.txt"));
+    (solve_part1(&draw, &boards), solve_part2(&draw, &boards))
 }
 
 fn load_input(input: &str) -> (Vec<usize>, Vec<Board>) {
@@ -14,13 +11,19 @@ fn load_input(input: &str) -> (Vec<usize>, Vec<Board>) {
     (draw, boards)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Tile {
     marked: bool,
     num: usize,
 }
 
-#[derive(Debug)]
+impl Tile {
+    pub fn new(num: usize) -> Self {
+        Self { num, marked: false }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Board {
     tiles: Vec<Vec<Tile>>,
     win_number: Option<usize>,
@@ -29,12 +32,12 @@ pub struct Board {
 
 impl Board {
     pub fn parse(board: &[&str]) -> Self {
-        let tiles: Vec<Vec<Tile>> = board
+        let tiles = board
             .iter()
-            .map(|lile| {
-                lile.split_ascii_whitespace()
-                    .filter_map(|x| x.parse().ok())
-                    .map(|num| Tile { marked: false, num })
+            .map(|line| {
+                line.split_ascii_whitespace()
+                    .filter_map(|num| num.parse().ok())
+                    .map(Tile::new)
                     .collect()
             })
             .collect();
@@ -46,17 +49,16 @@ impl Board {
     }
 
     pub fn score(&self) -> usize {
-        let unmarked_sum: usize = self
-            .tiles
+        self.tiles
             .iter()
-            .map(|l| {
-                l.iter()
+            .map(|line| {
+                line.iter()
                     .filter(|tile| !tile.marked)
                     .map(|tile| tile.num)
                     .sum::<usize>()
             })
-            .sum();
-        unmarked_sum * self.win_number.unwrap_or(0)
+            .sum::<usize>()
+            * self.win_number.unwrap_or(0)
     }
 
     pub fn mark(&mut self, move_cnt: usize, num: usize) -> bool {
@@ -68,33 +70,25 @@ impl Board {
             for tile in line {
                 if tile.num == num {
                     tile.marked = true;
+                    break;
                 }
             }
         }
 
-        let mut col = self.tiles[0].len() - 1;
-        let mut bingo = loop {
-            if self.tiles.iter().all(|l| l[col].marked) {
-                break true;
+        let bingo = self.tiles.iter().any(|l| l.iter().all(|tile| tile.marked));
+        for col in 0..self.tiles[0].len() {
+            if bingo || self.tiles.iter().all(|l| l[col].marked) {
+                self.win_move = move_cnt;
+                self.win_number = Some(num);
+                return true;
             }
-            if col == 0 {
-                break false;
-            }
-            col -= 1;
-        };
-
-        bingo |= self.tiles.iter().any(|l| l.iter().all(|tile| tile.marked));
-
-        if bingo {
-            self.win_move = move_cnt;
-            self.win_number = Some(num);
         }
-
-        bingo
+        false
     }
 }
 
-fn solve_part1(draw: &[usize], boards: &mut Vec<Board>) -> usize {
+fn solve_part1(draw: &[usize], boards: &[Board]) -> usize {
+    let mut boards = boards.to_vec();
     for (i, n) in draw.iter().enumerate() {
         for board in boards.iter_mut() {
             if board.mark(i, *n) {
@@ -105,7 +99,8 @@ fn solve_part1(draw: &[usize], boards: &mut Vec<Board>) -> usize {
     0
 }
 
-fn solve_part2(draw: &[usize], boards: &mut Vec<Board>) -> usize {
+fn solve_part2(draw: &[usize], boards: &[Board]) -> usize {
+    let mut boards = boards.to_vec();
     for (i, n) in draw.iter().enumerate() {
         for board in boards.iter_mut() {
             board.mark(i, *n);
@@ -119,13 +114,13 @@ fn solve_part2(draw: &[usize], boards: &mut Vec<Board>) -> usize {
 mod tests {
     #[test]
     fn solve_part1() {
-        let mut input = super::load_input(include_str!("example.txt"));
-        assert_eq!(super::solve_part1(&input.0, &mut input.1), 4512);
+        let (draw, boards) = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part1(&draw, &boards), 4512);
     }
 
     #[test]
     fn solve_part2() {
-        let mut input = super::load_input(include_str!("example.txt"));
-        assert_eq!(super::solve_part2(&input.0, &mut input.1), 1924);
+        let (draw, boards) = super::load_input(include_str!("example.txt"));
+        assert_eq!(super::solve_part2(&draw, &boards), 1924);
     }
 }
