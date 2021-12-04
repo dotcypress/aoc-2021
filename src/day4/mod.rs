@@ -1,6 +1,6 @@
 use crate::*;
 
-solver!("Giant Squid", Bingo, 4512, 1924);
+solver!("Day 4: Giant Squid", Bingo, 4512, 1924);
 struct Bingo {
     draw: Vec<usize>,
     boards: Vec<Board>,

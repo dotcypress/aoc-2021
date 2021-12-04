@@ -1,6 +1,6 @@
 use crate::*;
 
-solver!("Dive!", Submarine, 150, 900);
+solver!("Day 2: Dive!", Submarine, 150, 900);
 
 struct Submarine {
     cmds: Vec<Command>,
