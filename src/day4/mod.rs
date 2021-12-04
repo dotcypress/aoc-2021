@@ -7,10 +7,10 @@ pub fn solve() -> (usize, usize) {
 }
 
 fn load_input(input: &str) -> (Vec<usize>, Vec<Board>) {
-    let (draw, cards) = input.split_once("\n").unwrap();
-    let draw = draw.split(",").filter_map(|num| num.parse().ok()).collect();
-    let lines: Vec<&str> = cards.lines().filter(|l| !l.is_empty()).collect();
-    let boards = lines.chunks(5).map(Board::parse).collect();
+    let (draw, cards) = input.split_once('\n').unwrap();
+    let draw = draw.split(',').filter_map(|num| num.parse().ok()).collect();
+    let numbers: Vec<&str> = cards.lines().filter(|l| !l.is_empty()).collect();
+    let boards = numbers.chunks(5).map(Board::parse).collect();
     (draw, boards)
 }
 
@@ -23,8 +23,8 @@ pub struct Tile {
 #[derive(Debug)]
 pub struct Board {
     tiles: Vec<Vec<Tile>>,
-    win_move: usize,
     win_number: Option<usize>,
+    win_move: usize,
 }
 
 impl Board {
@@ -33,7 +33,7 @@ impl Board {
             .iter()
             .map(|lile| {
                 lile.split_ascii_whitespace()
-                    .map(|x| x.parse().unwrap())
+                    .filter_map(|x| x.parse().ok())
                     .map(|num| Tile { marked: false, num })
                     .collect()
             })
@@ -45,12 +45,9 @@ impl Board {
         }
     }
 
-    pub fn bingo(&self) -> bool {
-        self.win_number.is_some()
-    }
-
-    pub fn unmarked_sum(&self) -> usize {
-        self.tiles
+    pub fn score(&self) -> usize {
+        let unmarked_sum: usize = self
+            .tiles
             .iter()
             .map(|l| {
                 l.iter()
@@ -58,12 +55,13 @@ impl Board {
                     .map(|tile| tile.num)
                     .sum::<usize>()
             })
-            .sum()
+            .sum();
+        unmarked_sum * self.win_number.unwrap_or(0)
     }
 
-    pub fn mark(&mut self, move_cnt: usize, num: usize) {
+    pub fn mark(&mut self, move_cnt: usize, num: usize) -> bool {
         if self.win_number.is_some() {
-            return;
+            return true;
         }
 
         for line in self.tiles.iter_mut() {
@@ -74,43 +72,47 @@ impl Board {
             }
         }
 
-        for col in 0..self.tiles[0].len() {
+        let mut col = self.tiles[0].len() - 1;
+        let mut bingo = loop {
             if self.tiles.iter().all(|l| l[col].marked) {
-                self.win_move = move_cnt;
-                self.win_number = Some(num);
-                break;
+                break true;
             }
-        }
+            if col == 0 {
+                break false;
+            }
+            col -= 1;
+        };
 
-        if self.tiles.iter().any(|l| l.iter().all(|tile| tile.marked)) {
+        bingo |= self.tiles.iter().any(|l| l.iter().all(|tile| tile.marked));
+
+        if bingo {
             self.win_move = move_cnt;
             self.win_number = Some(num);
         }
+
+        bingo
     }
 }
 
-fn solve_part1(draw: &Vec<usize>, boards: &mut Vec<Board>) -> usize {
+fn solve_part1(draw: &[usize], boards: &mut Vec<Board>) -> usize {
     for (i, n) in draw.iter().enumerate() {
         for board in boards.iter_mut() {
-            board.mark(i, *n);
-            if board.bingo() {
-                return n * board.unmarked_sum();
+            if board.mark(i, *n) {
+                return board.score();
             }
         }
     }
     0
 }
 
-fn solve_part2(draw: &Vec<usize>, boards: &mut Vec<Board>) -> usize {
+fn solve_part2(draw: &[usize], boards: &mut Vec<Board>) -> usize {
     for (i, n) in draw.iter().enumerate() {
         for board in boards.iter_mut() {
             board.mark(i, *n);
         }
     }
-
     boards.sort_by(|a, b| a.win_move.partial_cmp(&b.win_move).unwrap());
-    let board = boards.iter().last().unwrap();
-    board.win_number.unwrap() * board.unmarked_sum()
+    boards.iter().last().unwrap().score()
 }
 
 #[cfg(test)]

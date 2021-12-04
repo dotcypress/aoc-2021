@@ -24,7 +24,7 @@ impl Command {
     }
 }
 
-fn solve_part1(cmds: &Vec<Command>) -> usize {
+fn solve_part1(cmds: &[Command]) -> usize {
     let mut pos = 0;
     let mut depth = 0;
     for cmd in cmds {
@@ -37,7 +37,7 @@ fn solve_part1(cmds: &Vec<Command>) -> usize {
     pos * depth
 }
 
-fn solve_part2(cmds: &Vec<Command>) -> usize {
+fn solve_part2(cmds: &[Command]) -> usize {
     let mut aim = 0;
     let mut pos = 0;
     let mut depth = 0;

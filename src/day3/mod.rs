@@ -22,7 +22,7 @@ fn calc_bit_stats<I: ExactSizeIterator<Item = usize>>(bit: usize, reports: I) ->
     (total - ones, ones)
 }
 
-fn calc_rating(bits: usize, inv: bool, reports: &Vec<usize>) -> usize {
+fn calc_rating(bits: usize, inv: bool, reports: &[usize]) -> usize {
     let mut set = HashSet::<usize>::from_iter(reports.iter().copied());
     for i in 0..bits {
         let (zeros, ones) = calc_bit_stats(bits - i, set.iter().copied());
@@ -36,7 +36,7 @@ fn calc_rating(bits: usize, inv: bool, reports: &Vec<usize>) -> usize {
     *set.iter().last().unwrap()
 }
 
-fn solve_part1(bits: usize, reports: &Vec<usize>) -> usize {
+fn solve_part1(bits: usize, reports: &[usize]) -> usize {
     let mut gamma = 0;
     let mut epsilon = 0;
     for i in 0..bits {
@@ -50,7 +50,7 @@ fn solve_part1(bits: usize, reports: &Vec<usize>) -> usize {
     gamma * epsilon
 }
 
-fn solve_part2(bits: usize, reports: &Vec<usize>) -> usize {
+fn solve_part2(bits: usize, reports: &[usize]) -> usize {
     calc_rating(bits, false, reports) * calc_rating(bits, true, reports)
 }
 

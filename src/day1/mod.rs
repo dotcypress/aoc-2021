@@ -7,18 +7,18 @@ fn load_input(input: &str) -> Vec<usize> {
     input.lines().filter_map(|line| line.parse().ok()).collect()
 }
 
-fn scan(sweep: &Vec<usize>, window: usize) -> usize {
+fn scan(sweep: &[usize], window: usize) -> usize {
     sweep
         .windows(window + 1)
         .filter(|w| w[0] < w[window])
         .count()
 }
 
-fn solve_part1(sweep: &Vec<usize>) -> usize {
+fn solve_part1(sweep: &[usize]) -> usize {
     scan(sweep, 1)
 }
 
-fn solve_part2(sweep: &Vec<usize>) -> usize {
+fn solve_part2(sweep: &[usize]) -> usize {
     scan(sweep, 3)
 }
 
