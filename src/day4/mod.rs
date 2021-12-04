@@ -1,14 +1,43 @@
-pub fn solve() -> (usize, usize) {
-    let (draw, boards) = load_input(include_str!("input.txt"));
-    (solve_part1(&draw, &boards), solve_part2(&draw, &boards))
+use crate::*;
+
+puzzle!(Bingo, 4512, 1924);
+
+struct Bingo {
+    draw: Vec<usize>,
+    boards: Vec<Board>,
 }
 
-fn load_input(input: &str) -> (Vec<usize>, Vec<Board>) {
-    let (draw, cards) = input.split_once('\n').unwrap();
-    let draw = draw.split(',').filter_map(|num| num.parse().ok()).collect();
-    let numbers: Vec<&str> = cards.lines().filter(|l| !l.is_empty()).collect();
-    let boards = numbers.chunks(5).map(Board::parse).collect();
-    (draw, boards)
+impl Puzzle for Bingo {
+    fn parse(input: &str) -> Self {
+        let (draw, cards) = input.split_once('\n').unwrap();
+        let draw = draw.split(',').filter_map(|num| num.parse().ok()).collect();
+        let numbers: Vec<&str> = cards.lines().filter(|l| !l.is_empty()).collect();
+        let boards = numbers.chunks(5).map(Board::parse).collect();
+        Self { draw, boards }
+    }
+
+    fn part_one(self) -> usize {
+        let mut boards = self.boards.to_vec();
+        for (i, n) in self.draw.iter().enumerate() {
+            for board in boards.iter_mut() {
+                if board.mark(i, *n) {
+                    return board.score();
+                }
+            }
+        }
+        0
+    }
+
+    fn part_two(self) -> usize {
+        let mut boards = self.boards.to_vec();
+        for (i, n) in self.draw.iter().enumerate() {
+            for board in boards.iter_mut() {
+                board.mark(i, *n);
+            }
+        }
+        boards.sort_by(|a, b| a.win_move.partial_cmp(&b.win_move).unwrap());
+        boards.iter().last().unwrap().score()
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -84,43 +113,5 @@ impl Board {
             }
         }
         false
-    }
-}
-
-fn solve_part1(draw: &[usize], boards: &[Board]) -> usize {
-    let mut boards = boards.to_vec();
-    for (i, n) in draw.iter().enumerate() {
-        for board in boards.iter_mut() {
-            if board.mark(i, *n) {
-                return board.score();
-            }
-        }
-    }
-    0
-}
-
-fn solve_part2(draw: &[usize], boards: &[Board]) -> usize {
-    let mut boards = boards.to_vec();
-    for (i, n) in draw.iter().enumerate() {
-        for board in boards.iter_mut() {
-            board.mark(i, *n);
-        }
-    }
-    boards.sort_by(|a, b| a.win_move.partial_cmp(&b.win_move).unwrap());
-    boards.iter().last().unwrap().score()
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn solve_part1() {
-        let (draw, boards) = super::load_input(include_str!("example.txt"));
-        assert_eq!(super::solve_part1(&draw, &boards), 4512);
-    }
-
-    #[test]
-    fn solve_part2() {
-        let (draw, boards) = super::load_input(include_str!("example.txt"));
-        assert_eq!(super::solve_part2(&draw, &boards), 1924);
     }
 }
