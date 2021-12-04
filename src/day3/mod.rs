@@ -8,6 +8,29 @@ struct BinaryDiagnostic {
     reports: Vec<usize>,
 }
 
+impl BinaryDiagnostic {
+    fn bit_stats<I: ExactSizeIterator<Item = usize>>(bit: usize, reports: I) -> (usize, usize) {
+        let total = reports.len();
+        let mask = 1 << (bit - 1);
+        let ones = reports.filter(|line| (*line & mask) == mask).count();
+        (total - ones, ones)
+    }
+
+    fn calc_rating(&self, inv: bool) -> usize {
+        let mut set = HashSet::<usize>::from_iter(self.reports.iter().copied());
+        for i in 0..self.bits {
+            let (zeros, ones) = Self::bit_stats(self.bits - i, set.iter().copied());
+            let mask = 1 << (self.bits - i - 1);
+            let criteria = (ones >= zeros) ^ inv;
+            set.retain(|report| criteria == ((report & mask) == mask));
+            if set.len() == 1 {
+                break;
+            }
+        }
+        *set.iter().last().unwrap()
+    }
+}
+
 impl Puzzle for BinaryDiagnostic {
     fn parse(input: &str) -> Self {
         let bits = input.lines().take(1).last().unwrap().len();
@@ -24,7 +47,7 @@ impl Puzzle for BinaryDiagnostic {
         for i in 0..self.bits {
             gamma <<= 1;
             epsilon <<= 1;
-            match calc_bit_stats(self.bits - i, self.reports.iter().copied()) {
+            match Self::bit_stats(self.bits - i, self.reports.iter().copied()) {
                 (zeros, ones) if zeros > ones => epsilon += 1,
                 _ => gamma += 1,
             }
@@ -33,28 +56,6 @@ impl Puzzle for BinaryDiagnostic {
     }
 
     fn part_two(&mut self) -> usize {
-        calc_rating(self.bits, false, &self.reports) * calc_rating(self.bits, true, &self.reports)
+        self.calc_rating(false) * self.calc_rating(true)
     }
-}
-
-//TODO: move to impl
-fn calc_rating(bits: usize, inv: bool, reports: &[usize]) -> usize {
-    let mut set = HashSet::<usize>::from_iter(reports.iter().copied());
-    for i in 0..bits {
-        let (zeros, ones) = calc_bit_stats(bits - i, set.iter().copied());
-        let mask = 1 << (bits - i - 1);
-        let criteria = (ones >= zeros) ^ inv;
-        set.retain(|report| criteria == ((report & mask) == mask));
-        if set.len() == 1 {
-            break;
-        }
-    }
-    *set.iter().last().unwrap()
-}
-
-fn calc_bit_stats<I: ExactSizeIterator<Item = usize>>(bit: usize, reports: I) -> (usize, usize) {
-    let total = reports.len();
-    let mask = 1 << (bit - 1);
-    let ones = reports.filter(|line| (*line & mask) == mask).count();
-    (total - ones, ones)
 }
