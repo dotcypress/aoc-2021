@@ -1,8 +1,8 @@
-pub mod day1;
-pub mod day2;
-pub mod day3;
-pub mod day4;
-pub mod day5;
+mod day1;
+mod day2;
+mod day3;
+mod day4;
+mod day5;
 
 pub const PUZZLES: [Puzzle; 5] = [
     day1::PUZZLE,
@@ -18,7 +18,7 @@ pub struct Puzzle {
 }
 
 #[macro_export]
-macro_rules! solver {
+macro_rules! puzzle {
     ($name:expr, $solver:ty, $part_one_test:expr, $part_two_test:expr) => {
         pub const PUZZLE: Puzzle = Puzzle {
             name: $name,

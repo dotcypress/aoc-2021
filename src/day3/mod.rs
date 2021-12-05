@@ -1,7 +1,7 @@
 use crate::*;
 use std::collections::*;
 
-solver!("Day 3: Binary Diagnostic", NoiseAnalyzer, 198, 230);
+puzzle!("Day 3: Binary Diagnostic", NoiseAnalyzer, 198, 230);
 
 struct NoiseAnalyzer {
     bits: usize,

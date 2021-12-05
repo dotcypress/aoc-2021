@@ -1,6 +1,6 @@
 use crate::*;
 
-solver!("Day 5: -n/a-", X, 0, 0);
+puzzle!("Day 5: -n/a-", X, 0, 0);
 
 struct X {}
 
