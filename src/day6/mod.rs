@@ -8,14 +8,13 @@ struct Lanternfish {
 
 impl Lanternfish {
     fn parse(input: &str) -> Self {
-        let gens =
-            input
-                .split(',')
-                .map(|x| x.parse::<usize>().unwrap())
-                .fold([0; 9], |mut gens, fish| {
-                    gens[fish] += 1;
-                    gens
-                });
+        let gens = input.split(',').flat_map(|x| x.parse::<usize>().ok()).fold(
+            [0; 9],
+            |mut gens, fish| {
+                gens[fish] += 1;
+                gens
+            },
+        );
         Self { gens }
     }
 
