@@ -17,8 +17,8 @@ impl CrabSubmarine {
 
     fn part_one(&mut self) -> usize {
         let mut min = usize::MAX;
-        let center = self.crabs.iter().sum::<usize>() / self.crabs.len() + 1;
-        for crab in 0..=center {
+        let avg = self.crabs.iter().sum::<usize>() / self.crabs.len() + 1;
+        for crab in 0..=avg {
             let cost = self
                 .crabs
                 .iter()
@@ -33,8 +33,8 @@ impl CrabSubmarine {
 
     fn part_two(&mut self) -> usize {
         let mut min = usize::MAX;
-        let center = self.crabs.iter().sum::<usize>() / self.crabs.len() + 1;
-        for crab in 0..=center {
+        let avg = self.crabs.iter().sum::<usize>() / self.crabs.len() + 1;
+        for crab in 0..=avg {
             let cost = self
                 .crabs
                 .iter()
