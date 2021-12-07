@@ -15,14 +15,15 @@ impl CrabSubmarine {
         Self { crabs }
     }
 
-    fn part_one(&mut self) -> usize {
+    fn min_fuel_cost(&self, engine: fn(usize) -> usize) -> usize {
         let mut min = usize::MAX;
         let avg = self.crabs.iter().sum::<usize>() / self.crabs.len() + 1;
-        for crab in 0..=avg {
+        for pos in 0..=avg {
             let cost = self
                 .crabs
                 .iter()
-                .map(|c| ((*c as isize) - crab as isize).abs() as usize)
+                .map(|crab| ((*crab as isize) - pos as isize).abs() as usize)
+                .map(engine)
                 .sum();
             if cost < min {
                 min = cost;
@@ -31,22 +32,11 @@ impl CrabSubmarine {
         min
     }
 
+    fn part_one(&mut self) -> usize {
+        self.min_fuel_cost(|s| s)
+    }
+
     fn part_two(&mut self) -> usize {
-        let mut min = usize::MAX;
-        let avg = self.crabs.iter().sum::<usize>() / self.crabs.len() + 1;
-        for crab in 0..=avg {
-            let cost = self
-                .crabs
-                .iter()
-                .map(|c| {
-                    let d = ((*c as isize) - crab as isize).abs() as usize;
-                    (0..=d).sum::<usize>()
-                })
-                .sum();
-            if cost < min {
-                min = cost;
-            }
-        }
-        min
+        self.min_fuel_cost(|s| (0..=s).sum())
     }
 }
