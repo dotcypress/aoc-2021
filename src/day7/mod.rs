@@ -32,11 +32,11 @@ impl CrabSubmarine {
         min
     }
 
-    fn part_one(&mut self) -> usize {
+    fn part_one(&self) -> usize {
         self.min_fuel_cost(|s| s)
     }
 
-    fn part_two(&mut self) -> usize {
+    fn part_two(&self) -> usize {
         self.min_fuel_cost(|s| (0..=s).sum())
     }
 }
