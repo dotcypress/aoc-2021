@@ -59,20 +59,20 @@ struct Decoder {
 
 impl Decoder {
     fn decode(&self) -> Vec<usize> {
-        self.input.iter().map(|s| self.guess_numger(s)).collect()
+        self.input.iter().map(|digit| self.guess(digit)).collect()
     }
 
-    fn guess_numger(&self, p: &HashSet<char>) -> usize {
-        match p.len() {
+    fn guess(&self, digit: &HashSet<char>) -> usize {
+        match digit.len() {
             2 => 1,
             3 => 7,
             4 => 4,
             7 => 8,
-            5 if self.one.intersection(p).count() == 2 => 3,
-            5 if self.four.intersection(p).count() == 2 => 2,
-            5 if self.four.intersection(p).count() == 3 => 5,
-            6 if self.four.intersection(p).count() == 4 => 9,
-            6 if self.one.intersection(p).count() == 2 => 0,
+            5 if digit.intersection(&self.one).count() == 2 => 3,
+            5 if digit.intersection(&self.four).count() == 2 => 2,
+            5 if digit.intersection(&self.four).count() == 3 => 5,
+            6 if digit.intersection(&self.four).count() == 4 => 9,
+            6 if digit.intersection(&self.one).count() == 2 => 0,
             6 => 6,
             _ => 0,
         }
