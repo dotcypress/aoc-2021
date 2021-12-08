@@ -15,23 +15,7 @@ struct SevenSegmentDisplay {
 
 impl SevenSegmentDisplay {
     fn parse(input: &str) -> Self {
-        let decoders = input
-            .lines()
-            .map(|line| line.split_once('|').unwrap())
-            .map(|(patterns, output)| {
-                let input = output
-                    .split_ascii_whitespace()
-                    .map(|s| s.chars().collect())
-                    .collect();
-                let patterns: Vec<HashSet<char>> = patterns
-                    .split_ascii_whitespace()
-                    .map(|s| s.chars().collect::<HashSet<char>>())
-                    .collect();
-                let one = patterns.iter().find(|x| x.len() == 2).unwrap().clone();
-                let four = patterns.iter().find(|x| x.len() == 4).unwrap().clone();
-                Decoder { input, one, four }
-            })
-            .collect();
+        let decoders = input.lines().map(Decoder::parse).collect();
         Self { decoders }
     }
 
@@ -58,6 +42,21 @@ struct Decoder {
 }
 
 impl Decoder {
+    fn parse(line: &str) -> Self {
+        let (patterns, output) = line.split_once('|').unwrap();
+        let input = output
+            .split_ascii_whitespace()
+            .map(|s| s.chars().collect())
+            .collect();
+        let patterns: Vec<HashSet<char>> = patterns
+            .split_ascii_whitespace()
+            .map(|s| s.chars().collect::<HashSet<char>>())
+            .collect();
+        let one = patterns.iter().find(|x| x.len() == 2).unwrap().clone();
+        let four = patterns.iter().find(|x| x.len() == 4).unwrap().clone();
+        Self { input, one, four }
+    }
+
     fn decode(&self) -> Vec<usize> {
         self.input.iter().map(|digit| self.guess(digit)).collect()
     }
