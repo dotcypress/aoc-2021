@@ -19,15 +19,17 @@ impl SevenSegmentDisplay {
             .lines()
             .map(|line| line.split_once('|').unwrap())
             .map(|(patterns, output)| {
-                let patterns = patterns
-                    .split_ascii_whitespace()
-                    .map(|s| s.chars().collect())
-                    .collect();
                 let input = output
                     .split_ascii_whitespace()
                     .map(|s| s.chars().collect())
                     .collect();
-                Decoder { patterns, input }
+                let patterns: Vec<HashSet<char>> = patterns
+                    .split_ascii_whitespace()
+                    .map(|s| s.chars().collect::<HashSet<char>>())
+                    .collect();
+                let one = patterns.iter().find(|x| x.len() == 2).unwrap().clone();
+                let four = patterns.iter().find(|x| x.len() == 4).unwrap().clone();
+                Decoder { input, one, four }
             })
             .collect();
         Self { decoders }
@@ -50,7 +52,8 @@ impl SevenSegmentDisplay {
 }
 
 struct Decoder {
-    patterns: Vec<HashSet<char>>,
+    one: HashSet<char>,
+    four: HashSet<char>,
     input: Vec<HashSet<char>>,
 }
 
@@ -60,30 +63,17 @@ impl Decoder {
     }
 
     fn guess_numger(&self, p: &HashSet<char>) -> usize {
-        let one = self
-            .patterns
-            .iter()
-            .filter(|x| x.len() == 2)
-            .next()
-            .unwrap();
-
-        let four = self
-            .patterns
-            .iter()
-            .filter(|x| x.len() == 4)
-            .next()
-            .unwrap();
-
         match p.len() {
             2 => 1,
             3 => 7,
             4 => 4,
             7 => 8,
-            5 if one.intersection(p).count() == 2 => 3,
-            5 if four.intersection(p).count() == 2 => 2,
-            5 if four.intersection(p).count() == 3 => 5,
-            6 if one.intersection(p).count() == 2 => 9,
-            6 if one.intersection(p).count() == 1 => 6,
+            5 if self.one.intersection(p).count() == 2 => 3,
+            5 if self.four.intersection(p).count() == 2 => 2,
+            5 if self.four.intersection(p).count() == 3 => 5,
+            6 if self.four.intersection(p).count() == 4 => 9,
+            6 if self.one.intersection(p).count() == 2 => 0,
+            6 => 6,
             _ => 0,
         }
     }

@@ -66,7 +66,7 @@ For now, _focus on the easy digits_. Consider this larger example:
     gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc |
     fgae cfgab fg bagce
 
-Because the digits `1`, `4`, `7`, and `8` each use a unique number of segments, you should be able to tell which combinations of signals correspond to those digits. Counting _only digits in the output values_ (the part after `|` on each line), in the above example, there are `_26_` instances of digits that use a unique number of segments (highlighted above).
+Because the digits `1`, `4`, `7`, and `8` each use a unique number of segments, you should be able to tell which combinations of signals correspond to those digits. Counting _only digits in the output values_ (the part after `|` on each line), in the above example, there are `26` instances of digits that use a unique number of segments (highlighted above).
 
 _In the output values, how many times do digits `1`, `4`, `7`, or `8` appear?_
 
@@ -126,6 +126,6 @@ Following this same process for each entry in the second, larger example above, 
 *   `gbdfcae bgc cg cgb`: `8717`
 *   `fgae cfgab fg bagce`: `4315`
 
-Adding all of the output values in this larger example produces `_61229_`.
+Adding all of the output values in this larger example produces `61229`.
 
 For each entry, determine all of the wire/segment connections and decode the four-digit output values. _What do you get if you add up all of the output values?_
