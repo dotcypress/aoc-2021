@@ -46,7 +46,6 @@ impl Decoder {
             .collect();
         let one = patterns.iter().find(|x| x.len() == 2).unwrap().clone();
         let four = patterns.iter().find(|x| x.len() == 4).unwrap().clone();
-
         let digits = input
             .iter()
             .map(|digit| match digit.len() {
@@ -63,7 +62,6 @@ impl Decoder {
                 _ => 0,
             })
             .collect();
-
         Self { digits }
     }
 }
