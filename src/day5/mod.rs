@@ -36,23 +36,6 @@ impl VentsMap {
     }
 }
 
-#[derive(PartialEq, Eq, Hash)]
-struct Point {
-    x: isize,
-    y: isize,
-}
-
-impl Point {
-    pub fn new(x: isize, y: isize) -> Self {
-        Self { x, y }
-    }
-
-    pub fn parse(input: &str) -> Self {
-        let (x, y) = input.split_once(',').unwrap();
-        Self::new(x.parse().unwrap(), y.parse().unwrap())
-    }
-}
-
 struct Vent {
     from: Point,
     to: Point,

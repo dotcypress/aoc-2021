@@ -25,6 +25,23 @@ pub struct Puzzle {
     pub solve: fn() -> (usize, usize),
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+pub struct Point {
+    pub x: isize,
+    pub y: isize,
+}
+
+impl Point {
+    pub const fn new(x: isize, y: isize) -> Self {
+        Self { x, y }
+    }
+
+    pub fn parse(input: &str) -> Self {
+        let (x, y) = input.split_once(',').unwrap();
+        Self::new(x.parse().unwrap(), y.parse().unwrap())
+    }
+}
+
 #[macro_export]
 macro_rules! puzzle {
     ($name:expr, $solver:ty, $part_one_test:expr, $part_two_test:expr) => {
