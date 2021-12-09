@@ -6,8 +6,9 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 
-pub const PUZZLES: [Puzzle; 8] = [
+pub const PUZZLES: [Puzzle; 9] = [
     day1::PUZZLE,
     day2::PUZZLE,
     day3::PUZZLE,
@@ -16,6 +17,7 @@ pub const PUZZLES: [Puzzle; 8] = [
     day6::PUZZLE,
     day7::PUZZLE,
     day8::PUZZLE,
+    day9::PUZZLE,
 ];
 
 pub struct Puzzle {
