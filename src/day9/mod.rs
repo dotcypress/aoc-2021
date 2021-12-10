@@ -1,94 +1,99 @@
 use crate::*;
+use std::collections::{HashMap, HashSet};
 
-puzzle!("Day 9: Smoke Basin", SmokeBasin, 15, 0);
+puzzle!("Day 9: Smoke Basin", SmokeBasin, 15, 1134);
 
 struct SmokeBasin {
-    heightmap: Vec<Vec<usize>>,
+    probes: HashMap<Point, usize>,
+    width: usize,
+    height: usize,
 }
 
 impl SmokeBasin {
     fn parse(input: &str) -> Self {
-        let heightmap = input
-            .lines()
-            .map(|line| {
-                line.chars()
-                    .filter_map(|ch| ch.to_digit(10))
-                    .map(|digit| digit as usize)
-                    .collect()
-            })
-            .collect();
-        Self { heightmap }
+        let mut probes = HashMap::new();
+        let mut max_x = 0;
+        let mut max_y = 0;
+        for (y, line) in input.lines().enumerate() {
+            for (x, ch) in line.chars().enumerate() {
+                let point = Point::new(x as _, y as _);
+                probes.insert(point, ch.to_digit(10).unwrap() as _);
+                max_x = x;
+            }
+            max_y = y;
+        }
+        Self {
+            probes,
+            width: max_x + 1,
+            height: max_y + 1,
+        }
     }
 
     fn part_one(&self) -> usize {
         self.basins()
             .iter()
-            .map(|point| self.heightmap[point.y as usize][point.x as usize] + 1)
+            .map(|point| self.depth_at(point) + 1)
             .sum()
     }
 
     fn part_two(&self) -> usize {
-        0
+        let mut basin_sizes: Vec<usize> = self
+            .basins()
+            .iter()
+            .map(|point| {
+                let mut flood = HashSet::new();
+                self.fill_basin(point, &mut flood);
+                flood.len()
+            })
+            .collect();
+        basin_sizes.sort_unstable();
+        basin_sizes.iter().rev().take(3).product()
     }
 
     fn basins(&self) -> Vec<Point> {
         let mut res = vec![];
-        let map_size = (self.heightmap[0].len(), self.heightmap.len());
-        for row in 0..self.heightmap.len() {
-            for col in 0..self.heightmap[row].len() {
-                let at = Point::new(col as isize, row as isize);
-                let height = self.height_at(at);
-                if Neighbors::at(at, map_size).all(|point| self.height_at(point) > height) {
-                    res.push(at);
+        for row in 0..self.height {
+            for col in 0..self.width {
+                let point = Point::new(col as _, row as _);
+                let min = self.depth_at(&point);
+                let is_basin = self
+                    .neighbors_at(&point)
+                    .iter()
+                    .all(|neighbor| self.depth_at(neighbor) > min);
+                if is_basin {
+                    res.push(point);
                 }
             }
         }
         res
     }
 
-    pub fn height_at(&self, origin: Point) -> usize {
-        self.heightmap[origin.y as usize][origin.x as usize]
-    }
-}
-
-pub struct Neighbors {
-    origin: Point,
-    size: (usize, usize),
-    next: usize,
-}
-
-impl Neighbors {
-    const NEIGHBORHOOD: [Point; 4] = [
-        Point::new(-1, 0),
-        Point::new(0, 1),
-        Point::new(1, 0),
-        Point::new(0, -1),
-    ];
-
-    pub fn at(origin: Point, size: (usize, usize)) -> Self {
-        Self {
-            origin,
-            size,
-            next: 0,
+    fn fill_basin(&self, point: &Point, flood: &mut HashSet<Point>) {
+        if flood.contains(point) || self.depth_at(point) == 9 {
+            return;
+        }
+        flood.insert(*point);
+        for neighbor in self.neighbors_at(point) {
+            self.fill_basin(&neighbor, flood)
         }
     }
-}
 
-impl Iterator for Neighbors {
-    type Item = Point;
+    fn depth_at(&self, point: &Point) -> usize {
+        *self.probes.get(point).unwrap()
+    }
 
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            if self.next >= Self::NEIGHBORHOOD.len() {
-                return None;
-            }
-            let addr = &Self::NEIGHBORHOOD[self.next];
-            self.next += 1;
-            let x = self.origin.x + addr.x;
-            let y = self.origin.y + addr.y;
-            if x >= 0 && y >= 0 && x < self.size.0 as isize && y < self.size.1 as isize {
-                return Some(Point::new(x, y));
-            }
-        }
+    fn neighbors_at(&self, point: &Point) -> Vec<Point> {
+        [
+            Point::new(-1, 0),
+            Point::new(0, 1),
+            Point::new(1, 0),
+            Point::new(0, -1),
+        ]
+        .iter()
+        .filter_map(|neighbor| {
+            let heighbor = Point::new(point.x + neighbor.x, point.y + neighbor.y);
+            self.probes.get(&heighbor).map(|_| heighbor)
+        })
+        .collect()
     }
 }

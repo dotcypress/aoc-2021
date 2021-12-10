@@ -25,7 +25,7 @@ pub struct Puzzle {
     pub solve: fn() -> (usize, usize),
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Point {
     pub x: isize,
     pub y: isize,
