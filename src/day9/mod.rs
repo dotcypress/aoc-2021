@@ -5,28 +5,18 @@ puzzle!("Day 9: Smoke Basin", SmokeBasin, 15, 1134);
 
 struct SmokeBasin {
     probes: HashMap<Point, usize>,
-    width: usize,
-    height: usize,
 }
 
 impl SmokeBasin {
     fn parse(input: &str) -> Self {
         let mut probes = HashMap::new();
-        let mut max_x = 0;
-        let mut max_y = 0;
         for (y, line) in input.lines().enumerate() {
             for (x, ch) in line.chars().enumerate() {
                 let point = Point::new(x as _, y as _);
                 probes.insert(point, ch.to_digit(10).unwrap() as _);
-                max_x = x;
             }
-            max_y = y;
         }
-        Self {
-            probes,
-            width: max_x + 1,
-            height: max_y + 1,
-        }
+        Self { probes }
     }
 
     fn part_one(&self) -> usize {
@@ -52,17 +42,14 @@ impl SmokeBasin {
 
     fn basins(&self) -> Vec<Point> {
         let mut res = vec![];
-        for row in 0..self.height {
-            for col in 0..self.width {
-                let point = Point::new(col as _, row as _);
-                let min = self.depth_at(&point);
-                let is_basin = self
-                    .neighbors_at(&point)
-                    .iter()
-                    .all(|neighbor| self.depth_at(neighbor) > min);
-                if is_basin {
-                    res.push(point);
-                }
+        for point in self.probes.keys() {
+            let min = self.depth_at(&point);
+            let is_basin = self
+                .neighbors_at(&point)
+                .iter()
+                .all(|neighbor| self.depth_at(neighbor) > min);
+            if is_basin {
+                res.push(*point);
             }
         }
         res
