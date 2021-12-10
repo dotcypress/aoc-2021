@@ -43,9 +43,9 @@ impl SmokeBasin {
     fn basins(&self) -> Vec<Point> {
         let mut res = vec![];
         for point in self.probes.keys() {
-            let min = self.depth_at(&point);
+            let min = self.depth_at(point);
             let is_basin = self
-                .neighbors_at(&point)
+                .neighbors_at(point)
                 .iter()
                 .all(|neighbor| self.depth_at(neighbor) > min);
             if is_basin {
